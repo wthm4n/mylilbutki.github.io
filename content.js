@@ -822,13 +822,12 @@ const PAGE_BUILDERS = [
             <div class="rev-name">${DIARY.nickname}.</div>
             <div class="rev-lines">
                 Thank you for the laughs.<br/>
-                Thank you for the chaos.<br/>
+                Thank you for the huh hto.<br/>
                 Thank you for being<br/>
-                one of my favorite people.
+                the person i can share anything with <3.
             </div>
             <div class="rev-sign">
-                Now stop overthinking.<br/>
-                Go enjoy your birthday, idiot. 🎂
+                gajab ho tum ngl <3
             </div>
         `;
         el.appendChild(rc);
@@ -901,12 +900,12 @@ const PAGE_BUILDERS = [
             right: 0;
             text-align: center;
             font-family: var(--font-scrawl);
-            font-size: 13px;
+            font-size: 30px;
             color: var(--ink-faded);
             opacity: .68;
             font-style: italic
         `;
-        sig.textContent = "happy birthday 🎂";
+        sig.textContent = "happy birthday 🎂 | agrrrr apne ashuuuuuuu se time mile to text krnaaa :)))))))";
         el.appendChild(sig);
         addStain(el);
     },
