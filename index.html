@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"
+    />
+    <title>Property of: A very confused person.</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@300;400;500&family=Caveat:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="index.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+      const DIARY = {
+        nickname: "Simmi",
+        fullname: "Samita",
+        photos: {
+          p_1: "assets/images/1.jpeg",
+          p_2: "assets/images/2.GIF",
+          p_3: "assets/images/3.jpeg",
+          p_4: "assets/images/4.GIF",
+          p_5: "assets/images/5.jpeg",
+          p_6: "assets/images/6.GIF",
+          p_7: "assets/images/7.jpeg",
+          p_8: "assets/images/8.jpeg",
+          p_9: "assets/images/9.jpg",
+          p_10: "assets/images/10.jpg",
+          p_11: "assets/images/11.jpg",
+          p_video: "assets/images/video.png",
+        },
+        flipMs: 1000,
+        particleCount: 32,
+        musicVolume: 0.1,
+        turnSoundVolume: 0.55,
+      };
+    </script>
+  </head>
+
+  <body>
+    <div id="loverlay">
+      <div class="loader-ring"></div>
+      <div class="lt">opening...</div>
+    </div>
+
+    <div id="scene">
+      <div id="lamp"></div>
+      <div id="grain"></div>
+      <div class="dprop" id="dp-mug"></div>
+      <div class="dprop" id="dp-pen"></div>
+      <div class="dprop" id="dp-papers"></div>
+      <canvas id="dust"></canvas>
+
+      <div id="book-wrap">
+        <!-- ═══ COVER STATE ═══ -->
+        <div id="cover-assembly">
+          <div
+            id="cover"
+            role="button"
+            tabindex="0"
+            aria-label="Open diary"
+            title="Click to open"
+          >
+            <div id="cover-front">
+              <div class="cframe cframe1"></div>
+              <div class="cframe cframe2"></div>
+              <div
+                class="worn"
+                style="
+                  width: 22px;
+                  height: 12px;
+                  top: 9px;
+                  left: 36px;
+                  transform: rotate(-8deg);
+                "
+              ></div>
+              <div
+                class="worn"
+                style="
+                  width: 14px;
+                  height: 9px;
+                  bottom: 12px;
+                  right: 28px;
+                  transform: rotate(4deg);
+                "
+              ></div>
+              <div
+                class="worn"
+                style="
+                  width: 9px;
+                  height: 5px;
+                  top: 44px;
+                  right: 34px;
+                  transform: rotate(-3deg);
+                  opacity: 0.07;
+                "
+              ></div>
+              <div
+                class="worn"
+                style="
+                  width: 18px;
+                  height: 8px;
+                  top: 55%;
+                  left: 18px;
+                  transform: rotate(-5deg);
+                  opacity: 0.12;
+                "
+              ></div>
+              <div class="corn cTL">
+                <svg viewBox="0 0 48 48" fill="none">
+                  <path
+                    d="M4 4 Q4 24 24 24"
+                    stroke="#B8943C"
+                    stroke-width="1.2"
+                    fill="none"
+                    opacity=".85"
+                  />
+                  <path
+                    d="M24 24 Q4 24 4 44"
+                    stroke="#B8943C"
+                    stroke-width="1.2"
+                    fill="none"
+                    opacity=".85"
+                  />
+                  <circle cx="4" cy="4" r="2.2" fill="#B8943C" opacity=".75" />
+                  <circle
+                    cx="14"
+                    cy="14"
+                    r="1.3"
+                    fill="#B8943C"
+                    opacity=".38"
+                  />
+                </svg>
+              </div>
+              <div class="corn cTR">
+                <svg viewBox="0 0 48 48" fill="none">
+                  <path
+                    d="M4 4 Q4 24 24 24"
+                    stroke="#B8943C"
+                    stroke-width="1.2"
+                    fill="none"
+                    opacity=".85"
+                  />
+                  <path
+                    d="M24 24 Q4 24 4 44"
+                    stroke="#B8943C"
+                    stroke-width="1.2"
+                    fill="none"
+                    opacity=".85"
+                  />
+                  <circle cx="4" cy="4" r="2.2" fill="#B8943C" opacity=".75" />
+                </svg>
+              </div>
+              <div class="corn cBL">
+                <svg viewBox="0 0 48 48" fill="none">
+                  <path
+                    d="M4 4 Q4 24 24 24"
+                    stroke="#B8943C"
+                    stroke-width="1.2"
+                    fill="none"
+                    opacity=".85"
+                  />
+                  <path
+                    d="M24 24 Q4 24 4 44"
+                    stroke="#B8943C"
+                    stroke-width="1.2"
+                    fill="none"
+                    opacity=".85"
+                  />
+                  <circle cx="4" cy="4" r="2.2" fill="#B8943C" opacity=".75" />
+                </svg>
+              </div>
+              <div class="corn cBR">
+                <svg viewBox="0 0 48 48" fill="none">
+                  <path
+                    d="M4 4 Q4 24 24 24"
+                    stroke="#B8943C"
+                    stroke-width="1.2"
+                    fill="none"
+                    opacity=".85"
+                  />
+                  <path
+                    d="M24 24 Q4 24 4 44"
+                    stroke="#B8943C"
+                    stroke-width="1.2"
+                    fill="none"
+                    opacity=".85"
+                  />
+                  <circle cx="4" cy="4" r="2.2" fill="#B8943C" opacity=".75" />
+                </svg>
+              </div>
+              <div class="cover-spine-edge"></div>
+              <div id="cover-text">
+                <div class="c-prop">From me:</div>
+                <div class="c-rule"></div>
+                <div class="c-title">A very confused<br />person.</div>
+                <div class="c-rule"></div>
+                <div class="c-sub">private. do not read.</div>
+              </div>
+            </div>
+            <div id="cover-back"></div>
+          </div>
+
+          <div id="hint">↑ click to open ↑</div>
+          <div id="swipe-hint">tap to open</div>
+        </div>
+
+        <!-- ═══ OPEN BOOK ═══ -->
+        <div id="book-open" class="not-built">
+          <div id="book-bg"></div>
+          <div class="stack-edge left-edge" id="le"></div>
+          <div class="stack-edge right-edge" id="re"></div>
+          <div class="flipbook" id="flipbook"></div>
+          <div id="gutter-shadow"></div>
+          <div id="open-spine"></div>
+          <div id="book-shadow"></div>
+        </div>
+      </div>
+      <!-- /book-wrap -->
+    </div>
+    <!-- /scene -->
+
+    <div id="mobile-nav">
+      <button class="mnav-btn" id="mnav-prev" aria-label="Previous page">
+        ‹
+      </button>
+      <span id="mnav-page-indicator">1 / 18</span>
+      <button class="mnav-btn" id="mnav-next" aria-label="Next page">›</button>
+    </div>
+
+    <button id="mbtn" title="Toggle music" aria-label="Toggle music">♪</button>
+
+    <!-- TURN.JS 4.1.0 -->
+    
+
+   <script src="turn.min.js"></script>
+    <script src="content.js"></script>
+  </body>
+</html>

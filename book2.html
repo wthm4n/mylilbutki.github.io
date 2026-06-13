@@ -1,0 +1,2516 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"
+    />
+    <title>Property of: A very confused person.</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@300;400;500&family=Caveat:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+      const DIARY = {
+        nickname: "Simmi",
+        fullname: "Samita",
+        photos: {
+          p_general: "",
+          p_eyes: "",
+          p_funny: "",
+          p_sleepy: "",
+          p_candid1: "",
+          p_candid2: "",
+          p_video: "",
+        },
+        flipMs: 1000,
+        particleCount: 32,
+        musicVolume: 0.1,
+        turnSoundVolume: 0.55,
+      };
+    </script>
+    <style>
+      /* ══════════════════════════════════════════
+   TOKENS
+══════════════════════════════════════════ */
+      :root {
+        --leather: #4a0e0e;
+        --leather-mid: #6b1c1c;
+        --leather-light: #8a2828;
+        --leather-spine: #1e0606;
+        --leather-sheen: #7a2020;
+        --gold: #b8943c;
+        --gold-light: #d4b060;
+        --gold-dim: rgba(184, 148, 60, 0.35);
+        --paper: #f4ebd0;
+        --paper-warm: #ede0c0;
+        --paper-aged: #e5d4a8;
+        --paper-dark: #d4c090;
+        --paper-edge: #c8b47a;
+        --ink: #1a0d06;
+        --ink-mid: #3a1e0c;
+        --ink-faded: #6b4020;
+        --ink-ghost: #9b7448;
+        --red-pen: #8b1818;
+        --blue-pen: #183a6b;
+        --desk: #110a04;
+        --desk-mid: #1e1008;
+        --desk-warm: #2e1a08;
+
+        /* ── Layout dimensions ── */
+        --BW: 820px;
+        --BH: 560px;
+        --PW: 390px;
+        --PH: 540px;
+        --SPINE: 28px;
+        --STACK: 14px;
+
+        --font-hand: "Kalam", cursive;
+        --font-scrawl: "Caveat", cursive;
+        --font-serif: "DM Serif Display", serif;
+        --font-mono: "JetBrains Mono", monospace;
+      }
+
+      @media (max-width: 900px) and (min-width: 601px) {
+        :root {
+          --BW: min(760px, 94vw);
+          --BH: calc(var(--BW) * 0.683);
+          --PW: calc(var(--BW) * 0.475);
+          --PH: calc(var(--BW) * 0.66);
+          --SPINE: 22px;
+          --STACK: 11px;
+        }
+      }
+
+      @media (max-width: 600px) {
+        :root {
+          --BW: 100vw;
+          --BH: calc(100dvh - 64px);
+          --PW: 100vw;
+          --PH: calc(100dvh - 64px);
+          --SPINE: 0px;
+          --STACK: 0px;
+        }
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: var(--desk);
+      }
+
+      body {
+        font-family: var(--font-hand);
+        color: var(--ink);
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+      }
+
+      #scene {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: radial-gradient(
+          ellipse 55% 50% at 50% 35%,
+          var(--desk-warm) 0%,
+          var(--desk-mid) 40%,
+          var(--desk) 100%
+        );
+      }
+
+      #scene::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background-image:
+          repeating-linear-gradient(
+            92deg,
+            transparent 0,
+            transparent 26px,
+            rgba(255, 170, 60, 0.008) 27px,
+            transparent 28px
+          ),
+          repeating-linear-gradient(
+            180deg,
+            transparent 0,
+            transparent 55px,
+            rgba(0, 0, 0, 0.012) 56px,
+            transparent 57px
+          );
+      }
+
+      #grain {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 1;
+        opacity: 0.28;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23g)' opacity='.4'/%3E%3C/svg%3E");
+        mix-blend-mode: multiply;
+      }
+
+      #lamp {
+        position: absolute;
+        top: -100px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 760px;
+        height: 700px;
+        pointer-events: none;
+        background: conic-gradient(
+          from 248deg at 50% 2%,
+          transparent 0deg,
+          rgba(255, 195, 80, 0.05) 28deg,
+          rgba(255, 215, 110, 0.12) 56deg,
+          rgba(255, 195, 80, 0.05) 84deg,
+          transparent 100deg
+        );
+        animation: lampFlicker 13s ease-in-out infinite;
+      }
+
+      @keyframes lampFlicker {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        22% {
+          opacity: 0.9;
+        }
+        48% {
+          opacity: 0.96;
+        }
+        71% {
+          opacity: 0.87;
+        }
+        88% {
+          opacity: 0.98;
+        }
+      }
+
+      .dprop {
+        position: absolute;
+        pointer-events: none;
+        opacity: 0.3;
+        filter: blur(1.5px);
+      }
+
+      #dp-mug {
+        width: 34px;
+        height: 44px;
+        background: radial-gradient(
+          circle at 35% 25%,
+          var(--desk-warm),
+          #0a0402
+        );
+        border-radius: 50% 50% 40% 40%/55% 55% 45% 45%;
+        bottom: 24%;
+        right: 13%;
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.6);
+      }
+
+      #dp-pen {
+        width: 120px;
+        height: 6px;
+        background: linear-gradient(90deg, #555, #aaa, #888, #aaa, #666);
+        border-radius: 2px 18px 18px 2px;
+        bottom: 18%;
+        left: 11%;
+        transform: rotate(-14deg);
+      }
+
+      #dp-papers {
+        width: 80px;
+        height: 100px;
+        background: linear-gradient(160deg, #3a2008, #1a0a02);
+        border-radius: 2px 4px 4px 2px;
+        bottom: 21%;
+        right: 20%;
+        transform: rotate(5deg);
+        box-shadow: 3px 3px 12px rgba(0, 0, 0, 0.6);
+      }
+
+      @media (max-width: 600px) {
+        #dp-mug,
+        #dp-pen,
+        #dp-papers {
+          display: none;
+        }
+      }
+
+      #dust {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 2;
+      }
+
+      /* ══════════════════════════════════════════
+   BOOK WRAP — FIX: explicit dimensions so children can absolutely overlay
+══════════════════════════════════════════ */
+      #book-wrap {
+        position: relative;
+        z-index: 10;
+        width: var(--BW);
+        height: var(--BH);
+        filter: drop-shadow(0 50px 100px rgba(0, 0, 0, 0.85))
+          drop-shadow(0 18px 36px rgba(0, 0, 0, 0.6));
+        will-change: transform;
+      }
+
+      #book-wrap:not(.opened) {
+        animation: breathe 5s ease-in-out infinite;
+      }
+
+      @keyframes breathe {
+        0%,
+        100% {
+          transform: translateY(0) rotate(-0.7deg);
+        }
+        50% {
+          transform: translateY(-8px) rotate(-0.25deg);
+        }
+      }
+
+      /* ══════════════════════════════════════════
+   COVER ASSEMBLY — FIX: absolute so it doesn't push book-open down
+══════════════════════════════════════════ */
+      #cover-assembly {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: var(--BW);
+        height: var(--BH);
+        perspective: 2200px;
+        perspective-origin: 50% 50%;
+        transform-style: preserve-3d;
+        transform-origin: left center;
+        z-index: 5;
+        pointer-events: none;
+      }
+
+      #cover-assembly.done {
+        display: none;
+      }
+
+      /* ── BACK COVER — full footprint, stationary, sits beneath everything ── */
+      #back-cover {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: var(--BW);
+        height: var(--BH);
+        z-index: 2;
+        pointer-events: none;
+        border-radius: 3px;
+        background: linear-gradient(
+          148deg,
+          var(--leather-sheen) 0%,
+          var(--leather-mid) 10%,
+          var(--leather) 38%,
+          #3a0a0a 70%,
+          var(--leather-spine) 100%
+        );
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+      }
+
+      #back-cover::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='250'%3E%3Cfilter id='t'%3E%3CfeTurbulence type='turbulence' baseFrequency='.65' numOctaves='5' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='250' height='250' filter='url(%23t)' opacity='.12'/%3E%3C/svg%3E");
+        mix-blend-mode: soft-light;
+        border-radius: inherit;
+      }
+
+      #spine-body {
+        position: absolute;
+        left: calc(var(--BW) / 2 - var(--SPINE) / 2);
+        top: 0;
+        bottom: 0;
+        width: var(--SPINE);
+        z-index: 4;
+        pointer-events: none;
+        background: linear-gradient(
+          90deg,
+          var(--leather-spine) 0%,
+          #3a0808 18%,
+          #5a1212 42%,
+          #3a0808 62%,
+          var(--leather-spine) 100%
+        );
+        box-shadow:
+          0 0 20px rgba(0, 0, 0, 0.7),
+          inset 2px 0 6px rgba(255, 150, 50, 0.06),
+          inset -2px 0 6px rgba(255, 150, 50, 0.04);
+      }
+
+      #spine-body::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          180deg,
+          rgba(0, 0, 0, 0.4) 0%,
+          rgba(0, 0, 0, 0.1) 20%,
+          transparent 50%,
+          rgba(0, 0, 0, 0.1) 80%,
+          rgba(0, 0, 0, 0.4) 100%
+        );
+      }
+
+      #spine-body::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 0;
+        bottom: 0;
+        width: 1px;
+        transform: translateX(-50%);
+        background: repeating-linear-gradient(
+          180deg,
+          transparent 0,
+          transparent 6px,
+          rgba(184, 148, 60, 0.25) 6px,
+          rgba(184, 148, 60, 0.25) 9px,
+          transparent 9px,
+          transparent 15px
+        );
+      }
+
+      /* ── FRONT COVER — single-cover width, hinged to the spine's right edge ──
+         Closed: sits over the right page block, flush against the spine.
+         Open: rotates -180deg about its left (hinge) edge to lie flat over
+         the left page block. The hinge edge never moves. */
+      #front-cover {
+        position: absolute;
+        top: 0;
+        left: calc(50% + var(--SPINE) / 2);
+        width: calc((var(--BW) - var(--SPINE)) / 2);
+        height: var(--BH);
+        transform-origin: 0% 50%;
+        transform: rotateY(0deg);
+        transform-style: preserve-3d;
+        cursor: pointer;
+        border-radius: 0 4px 4px 0;
+        will-change: transform;
+        transition: transform 1.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        pointer-events: auto;
+        z-index: 5;
+      }
+
+      #front-cover.opening {
+        transform: rotateY(-160deg);
+      }
+
+      #front-cover.open {
+        transform: rotateY(-180deg);
+        pointer-events: none;
+      }
+
+      #cover-front {
+        position: absolute;
+        inset: 0;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+        border-radius: 0 4px 4px 0;
+        background: linear-gradient(
+          148deg,
+          var(--leather-sheen) 0%,
+          var(--leather-mid) 10%,
+          var(--leather) 38%,
+          #3a0a0a 70%,
+          var(--leather-spine) 100%
+        );
+        overflow: hidden;
+      }
+
+      #cover-front::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='250'%3E%3Cfilter id='t'%3E%3CfeTurbulence type='turbulence' baseFrequency='.65' numOctaves='5' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='250' height='250' filter='url(%23t)' opacity='.12'/%3E%3C/svg%3E");
+        mix-blend-mode: soft-light;
+      }
+
+      #cover-front::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 180, 80, 0.07) 0%,
+          transparent 45%,
+          rgba(0, 0, 0, 0.15) 100%
+        );
+      }
+
+      .cframe {
+        position: absolute;
+        border: 1.5px solid var(--gold);
+        pointer-events: none;
+        opacity: 0.5;
+        border-radius: 2px;
+      }
+
+      .cframe1 {
+        inset: 14px;
+        border-radius: 1px;
+      }
+
+      .cframe2 {
+        inset: 21px;
+        border: 0.7px solid var(--gold);
+        opacity: 0.28;
+        border-radius: 1px;
+      }
+
+      .worn {
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.16);
+        pointer-events: none;
+      }
+
+      .corn {
+        position: absolute;
+        width: 46px;
+        height: 46px;
+        opacity: 0.5;
+        pointer-events: none;
+      }
+
+      .corn svg {
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+      }
+      .cTL {
+        top: 22px;
+        left: 22px;
+      }
+      .cTR {
+        top: 22px;
+        right: 22px;
+        transform: scaleX(-1);
+      }
+      .cBL {
+        bottom: 22px;
+        left: 22px;
+        transform: scaleY(-1);
+      }
+      .cBR {
+        bottom: 22px;
+        right: 22px;
+        transform: scale(-1, -1);
+      }
+
+      #cover-text {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 0 28px;
+        z-index: 2;
+      }
+
+      .c-prop {
+        font-family: var(--font-mono);
+        font-size: 9px;
+        letter-spacing: 3.5px;
+        text-transform: uppercase;
+        color: var(--gold);
+        opacity: 0.6;
+      }
+
+      .c-title {
+        font-family: var(--font-serif);
+        font-style: italic;
+        font-size: clamp(16px, 2.2vw, 22px);
+        color: var(--gold-light);
+        text-align: center;
+        line-height: 1.35;
+        text-shadow: 0 1px 8px rgba(0, 0, 0, 0.7);
+      }
+
+      .c-sub {
+        font-family: var(--font-scrawl);
+        font-size: 13px;
+        color: var(--gold);
+        opacity: 0.42;
+        font-style: italic;
+      }
+
+      .c-rule {
+        width: 55px;
+        height: 1px;
+        background: var(--gold);
+        opacity: 0.32;
+        margin: 1px 0;
+      }
+
+      #cover-back {
+        position: absolute;
+        inset: 0;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+        transform: rotateY(180deg);
+        background: linear-gradient(160deg, #2a1005 0%, #1a0802 100%);
+        border-radius: 4px 0 0 4px;
+      }
+
+      #cover-back::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='.08'/%3E%3C/svg%3E");
+        mix-blend-mode: soft-light;
+      }
+
+      #hint {
+        position: absolute;
+        bottom: -52px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-family: var(--font-mono);
+        font-size: 9.5px;
+        color: rgba(212, 176, 96, 0.5);
+        letter-spacing: 2.5px;
+        white-space: nowrap;
+        animation: hintFloat 2.4s ease-in-out infinite;
+      }
+
+      @keyframes hintFloat {
+        0%,
+        100% {
+          opacity: 0.3;
+          transform: translateX(-50%) translateY(0);
+        }
+        50% {
+          opacity: 0.85;
+          transform: translateX(-50%) translateY(-5px);
+        }
+      }
+
+      #swipe-hint {
+        position: absolute;
+        bottom: -44px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-family: var(--font-mono);
+        font-size: 8.5px;
+        letter-spacing: 2px;
+        color: rgba(212, 176, 96, 0.38);
+        white-space: nowrap;
+        display: none;
+        animation: hintFloat 2.4s ease-in-out infinite;
+      }
+
+      @media (pointer: coarse) {
+        #swipe-hint {
+          display: block;
+        }
+      }
+
+      /* ══════════════════════════════════════════
+   OPEN BOOK — FIX: absolute so it overlays cover-assembly exactly
+══════════════════════════════════════════ */
+      #book-open {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: var(--BW);
+        height: var(--BH);
+        display: block;
+        z-index: 1;
+      }
+
+      #book-open.not-built {
+        visibility: hidden;
+      }
+
+      #book-open.settling {
+        animation: bookSettle 0.55s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      }
+
+      @keyframes bookSettle {
+        0% {
+          transform: translateY(-4px) scale(1.003);
+        }
+        40% {
+          transform: translateY(2px) scale(0.999);
+        }
+        70% {
+          transform: translateY(-1px) scale(1.001);
+        }
+        100% {
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      #book-shadow {
+        position: absolute;
+        bottom: -18px;
+        left: 4%;
+        right: 4%;
+        height: 40px;
+        background: radial-gradient(
+          ellipse,
+          rgba(0, 0, 0, 0.75) 0%,
+          transparent 70%
+        );
+        pointer-events: none;
+        z-index: -1;
+        filter: blur(12px);
+      }
+
+      #book-bg {
+        position: absolute;
+        inset: 0;
+        border-radius: 3px;
+        overflow: hidden;
+        background: linear-gradient(
+          90deg,
+          var(--leather-spine) 0px,
+          #2a0808 calc(var(--STACK) + 2px),
+          var(--paper-edge) calc(var(--STACK) + 3px),
+          var(--paper-aged) calc(var(--STACK) + 18px),
+          var(--paper-warm) calc(50% - var(--SPINE) / 2 - 4px),
+          var(--paper-dark) calc(50% - var(--SPINE) / 2),
+          var(--leather-spine) calc(50% - var(--SPINE) / 2 + 1px),
+          #3a0808 50%,
+          var(--leather-spine) calc(50% + var(--SPINE) / 2 - 1px),
+          var(--paper-dark) calc(50% + var(--SPINE) / 2),
+          var(--paper-warm) calc(50% + var(--SPINE) / 2 + 4px),
+          var(--paper-aged) calc(100% - var(--STACK) - 18px),
+          var(--paper-edge) calc(100% - var(--STACK) - 3px),
+          #2a0808 calc(100% - var(--STACK) - 2px),
+          #1a0604 100%
+        );
+        z-index: 0;
+      }
+
+      /* ══════════════════════════════════════════
+   PAGE-FLIP BOOK — stack of double-sided leaves, click to turn
+══════════════════════════════════════════ */
+      .book {
+        position: absolute;
+        inset: 0;
+        perspective: 250vw;
+        z-index: 10;
+      }
+
+      .book .pages {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: var(--BW);
+        height: var(--BH);
+        transform-style: preserve-3d;
+      }
+
+      .leaf {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: calc((var(--BW) - var(--SPINE)) / 2);
+        height: var(--BH);
+        transform-origin: 0% 0%;
+        transform: rotateY(0deg);
+        transform-style: preserve-3d;
+        transition: transform 1s cubic-bezier(0.4, 0.1, 0.2, 1);
+        cursor: pointer;
+        user-select: none;
+      }
+
+      .leaf.flipped {
+        transform: rotateY(-180deg);
+      }
+
+      .leaf.grabbing {
+        transition: none;
+      }
+
+      @media (max-width: 600px) {
+        .book .pages {
+          width: var(--BW);
+        }
+        .leaf {
+          width: var(--BW);
+          right: 0;
+          transform-origin: 100% 0%;
+        }
+        .leaf.flipped {
+          transform: rotateY(180deg);
+        }
+      }
+
+      .face {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        background: var(--paper);
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+        box-shadow:
+          0 4px 22px rgba(0, 0, 0, 0.18),
+          0 1px 4px rgba(0, 0, 0, 0.12);
+        border-radius: 0 3px 3px 0;
+      }
+
+      .face.front {
+        background: var(--paper);
+        box-shadow:
+          inset 10px 0 28px rgba(0, 0, 0, 0.11),
+          inset 0 0 30px rgba(180, 140, 80, 0.03);
+      }
+      .face.back {
+        background: var(--paper-warm);
+        transform: rotateY(180deg);
+        border-radius: 3px 0 0 0;
+        box-shadow:
+          inset -10px 0 28px rgba(0, 0, 0, 0.11),
+          inset 0 0 30px rgba(180, 140, 80, 0.03);
+      }
+
+      .face::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        background-image:
+          repeating-linear-gradient(
+            transparent 0px,
+            transparent 26px,
+            rgba(150, 120, 80, 0.14) 27px
+          ),
+          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='.07'/%3E%3C/svg%3E");
+      }
+
+      .face::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+        background:
+          linear-gradient(
+            to right,
+            rgba(0, 0, 0, 0.07) 0%,
+            transparent 9%,
+            transparent 91%,
+            rgba(0, 0, 0, 0.05) 100%
+          ),
+          linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0.05) 0%,
+            transparent 11%,
+            transparent 91%,
+            rgba(0, 0, 0, 0.09) 100%
+          );
+      }
+
+      .pcontent {
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        padding: clamp(14px, 2.8%, 26px) clamp(12px, 3.5%, 24px)
+          clamp(22px, 3.5%, 32px);
+        overflow: hidden;
+      }
+
+      .pg-num {
+        position: absolute;
+        bottom: 10px;
+        font-family: var(--font-mono);
+        font-size: 9.5px;
+        color: var(--ink-ghost);
+        opacity: 0.45;
+        z-index: 5;
+      }
+
+      .face.front .pg-num {
+        right: 18px;
+      }
+      .face.back .pg-num {
+        left: 18px;
+      }
+
+      .t-date {
+        font-family: var(--font-mono);
+        font-size: 9.5px;
+        color: var(--ink-faded);
+        letter-spacing: 1.5px;
+        margin-bottom: 12px;
+        opacity: 0.68;
+      }
+
+      .t-body {
+        font-family: var(--font-hand);
+        font-size: clamp(12px, 1.65vw, 16px);
+        line-height: 1.92;
+        color: var(--ink);
+      }
+
+      .t-big {
+        font-family: var(--font-serif);
+        font-style: italic;
+        font-size: clamp(22px, 3.2vw, 30px);
+        line-height: 1.2;
+        color: var(--ink-mid);
+      }
+
+      .t-small {
+        font-size: clamp(10px, 1.3vw, 12.5px);
+        color: var(--ink-faded);
+        font-style: italic;
+      }
+
+      .t-red {
+        color: var(--red-pen);
+      }
+      .t-blue {
+        color: var(--blue-pen);
+      }
+
+      .br {
+        display: block;
+        height: 7px;
+      }
+      .br-sm {
+        display: block;
+        height: 3px;
+      }
+
+      .case-label {
+        display: inline-block;
+        font-family: var(--font-mono);
+        font-size: 8.5px;
+        letter-spacing: 2.5px;
+        text-transform: uppercase;
+        color: var(--ink-ghost);
+        border-top: 1px solid var(--ink-ghost);
+        padding-top: 3px;
+        margin-bottom: 9px;
+      }
+
+      .squiggle {
+        text-decoration: underline;
+        text-decoration-style: wavy;
+        text-decoration-color: var(--red-pen);
+      }
+
+      .photo {
+        position: absolute;
+        background: var(--paper);
+        padding: 7px 7px 22px 7px;
+        box-shadow:
+          0 2px 4px rgba(0, 0, 0, 0.18),
+          0 6px 16px rgba(0, 0, 0, 0.22),
+          0 14px 30px rgba(0, 0, 0, 0.14),
+          inset 0 0 0 0.5px rgba(0, 0, 0, 0.06);
+      }
+
+      .photo::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.06) 0%,
+          transparent 50%
+        );
+        pointer-events: none;
+        z-index: 10;
+      }
+
+      .photo::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 14px;
+        height: 14px;
+        background: linear-gradient(
+          225deg,
+          rgba(0, 0, 0, 0.22) 0%,
+          transparent 70%
+        );
+        pointer-events: none;
+      }
+
+      .photo-img {
+        width: 100%;
+        height: calc(100% - 15px);
+        display: block;
+        object-fit: cover;
+        background: var(--paper-aged);
+      }
+
+      .ph-empty {
+        width: 100%;
+        height: calc(100% - 15px);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        background: linear-gradient(
+          145deg,
+          rgba(0, 0, 0, 0.04),
+          rgba(0, 0, 0, 0.01)
+        );
+        font-family: var(--font-mono);
+        font-size: 7.5px;
+        letter-spacing: 1.5px;
+        color: var(--ink-ghost);
+        text-transform: uppercase;
+        cursor: pointer;
+      }
+
+      .ph-ico {
+        font-size: 20px;
+        opacity: 0.25;
+        margin-bottom: 2px;
+      }
+
+      .ph-upload {
+        position: absolute;
+        inset: 0;
+        z-index: 8;
+        cursor: pointer;
+        opacity: 0;
+      }
+
+      .ph-upload input {
+        display: none;
+      }
+
+      .tape {
+        position: absolute;
+        z-index: 9;
+        pointer-events: none;
+        border-radius: 1px;
+      }
+
+      .tape-y {
+        background: rgba(255, 238, 160, 0.65);
+      }
+      .tape-b {
+        background: rgba(200, 225, 255, 0.6);
+      }
+
+      .tape-h {
+        width: 50px;
+        height: 13px;
+        top: var(--t, -7px);
+        left: var(--l, 50%);
+        margin-left: -25px;
+        transform: rotate(var(--r, 0deg));
+      }
+
+      .tape::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.25),
+          rgba(255, 255, 255, 0.05)
+        );
+        pointer-events: none;
+      }
+
+      .annot {
+        position: absolute;
+        z-index: 15;
+        font-family: var(--font-scrawl);
+        font-size: clamp(9px, 1.2vw, 12px);
+        color: var(--ink-faded);
+        pointer-events: none;
+        white-space: pre;
+      }
+
+      .annot.red {
+        color: var(--red-pen);
+      }
+
+      .sticky {
+        position: absolute;
+        background: #fdfbc3;
+        padding: 7px 9px;
+        font-family: var(--font-scrawl);
+        font-size: clamp(10px, 1.3vw, 12.5px);
+        color: #2a2808;
+        line-height: 1.5;
+        z-index: 20;
+        box-shadow:
+          0 2px 4px rgba(0, 0, 0, 0.15),
+          0 5px 14px rgba(0, 0, 0, 0.12),
+          inset 0 -1px 0 rgba(0, 0, 0, 0.04);
+        transform: rotate(var(--r, 2deg));
+        pointer-events: none;
+      }
+
+      .sticky::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: rgba(0, 0, 0, 0.06);
+      }
+
+      .sticky.pink {
+        background: #ffc4c2;
+        color: #3a0606;
+      }
+      .sticky.blue {
+        background: #c3d7fd;
+        color: #0a1a3c;
+      }
+
+      .doodle {
+        position: absolute;
+        pointer-events: none;
+        z-index: 10;
+        opacity: 0.48;
+      }
+
+      @media (max-width: 600px) {
+        #book-open {
+          border-radius: 0;
+        }
+        #book-bg {
+          background: var(--paper-warm);
+        }
+        .t-body {
+          font-size: 15px;
+          line-height: 2;
+        }
+        .t-big {
+          font-size: 28px;
+        }
+        .pcontent {
+          padding: 18px 18px 48px;
+        }
+        .pg-num {
+          font-size: 10px;
+        }
+        .photo {
+          position: relative !important;
+          margin: 10px auto;
+          display: block !important;
+          left: auto !important;
+          right: auto !important;
+          top: auto !important;
+          bottom: auto !important;
+        }
+        .annot {
+          font-size: 11px;
+        }
+        #mobile-nav {
+          display: flex;
+        }
+      }
+
+      #mobile-nav {
+        display: none;
+      }
+
+      #mobile-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 56px;
+        background: linear-gradient(
+          to top,
+          rgba(10, 4, 1, 0.95),
+          rgba(10, 4, 1, 0.7)
+        );
+        z-index: 200;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        backdrop-filter: blur(8px);
+        border-top: 1px solid rgba(184, 148, 60, 0.15);
+      }
+
+      .mnav-btn {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        border: 1px solid rgba(184, 148, 60, 0.3);
+        background: rgba(30, 8, 4, 0.8);
+        color: rgba(184, 148, 60, 0.8);
+        font-size: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        -webkit-appearance: none;
+        touch-action: manipulation;
+      }
+
+      .mnav-btn:active {
+        background: rgba(80, 12, 12, 0.9);
+      }
+
+      #mnav-page-indicator {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        color: rgba(184, 148, 60, 0.5);
+        letter-spacing: 2px;
+      }
+
+      #mbtn {
+        position: fixed;
+        top: 14px;
+        right: 14px;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: 1px solid rgba(184, 148, 60, 0.32);
+        background: rgba(20, 10, 4, 0.8);
+        color: rgba(184, 148, 60, 0.65);
+        font-size: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 9999;
+        transition: all 0.2s;
+        backdrop-filter: blur(8px);
+        -webkit-appearance: none;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+      }
+
+      #mbtn:hover {
+        background: rgba(80, 12, 12, 0.8);
+        color: var(--gold-light);
+      }
+
+      @media (max-width: 600px) {
+        #mbtn {
+          top: 8px;
+          right: 8px;
+          width: 32px;
+          height: 32px;
+          font-size: 13px;
+        }
+      }
+
+      #reveal-container {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 28px 20px;
+        text-align: center;
+        z-index: 3;
+        opacity: 0;
+        transition: opacity 0.5s ease;
+      }
+
+      #reveal-container.show {
+        opacity: 1;
+      }
+
+      .rev-hb {
+        font-family: var(--font-serif);
+        font-style: italic;
+        font-size: clamp(10px, 1.3vw, 12px);
+        letter-spacing: 3px;
+        color: var(--ink-faded);
+        text-transform: uppercase;
+        opacity: 0;
+        transform: translateY(10px);
+        transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .rev-name {
+        font-family: var(--font-serif);
+        font-style: italic;
+        font-size: clamp(30px, 4.5vw, 48px);
+        color: var(--leather);
+        line-height: 1.05;
+        opacity: 0;
+        transform: translateY(14px);
+        transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.22s;
+        text-shadow: 1px 2px 0 rgba(0, 0, 0, 0.07);
+      }
+
+      .rev-lines {
+        font-family: var(--font-hand);
+        font-size: clamp(12px, 1.55vw, 15.5px);
+        color: var(--ink-mid);
+        line-height: 2.1;
+        opacity: 0;
+        transform: translateY(12px);
+        transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.52s;
+        margin-top: 16px;
+      }
+
+      .rev-sign {
+        font-family: var(--font-scrawl);
+        font-size: clamp(14px, 1.8vw, 20px);
+        color: var(--leather);
+        font-style: italic;
+        margin-top: 18px;
+        opacity: 0;
+        transform: translateY(10px);
+        transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1) 0.95s;
+      }
+
+      .rev-hb.in,
+      .rev-name.in,
+      .rev-lines.in,
+      .rev-sign.in {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .vid-frame {
+        position: absolute;
+        left: 14px;
+        right: 14px;
+        top: 48px;
+        background: #0a0604;
+        border-radius: 2px;
+        overflow: hidden;
+        box-shadow:
+          0 4px 16px rgba(0, 0, 0, 0.35),
+          0 0 0 8px var(--paper-aged),
+          0 0 0 9px rgba(0, 0, 0, 0.12);
+        aspect-ratio: 16/9;
+      }
+
+      .vid-frame video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .vid-ph {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        background: radial-gradient(ellipse, #1c0b04, #0a0402);
+        color: rgba(255, 255, 255, 0.28);
+        font-family: var(--font-mono);
+        font-size: 8.5px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        cursor: pointer;
+      }
+
+      .vid-play {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 1.5px solid rgba(255, 255, 255, 0.22);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        margin-bottom: 4px;
+      }
+
+      .vid-upload {
+        position: absolute;
+        inset: 0;
+        cursor: pointer;
+        z-index: 5;
+        opacity: 0;
+      }
+      .vid-upload input {
+        display: none;
+      }
+
+      .cpiece {
+        position: fixed;
+        pointer-events: none;
+        z-index: 9999;
+        animation: cfall linear forwards;
+      }
+
+      @keyframes cfall {
+        0% {
+          opacity: 1;
+          transform: translateY(0) rotate(0deg);
+        }
+        80% {
+          opacity: 0.85;
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(108vh) rotate(720deg) scale(0.7);
+        }
+      }
+
+      #loverlay {
+        position: fixed;
+        inset: 0;
+        background: var(--desk);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        z-index: 8000;
+        transition: opacity 1.1s ease;
+      }
+
+      #loverlay.out {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .lt {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        letter-spacing: 4px;
+        color: rgba(184, 148, 60, 0.35);
+        text-transform: uppercase;
+      }
+
+      .loader-ring {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        border: 2px solid rgba(184, 148, 60, 0.1);
+        border-top: 2px solid rgba(184, 148, 60, 0.55);
+        animation: spin 0.95s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      @media (max-width: 900px) and (min-width: 601px) {
+        .t-body {
+          font-size: 14px;
+        }
+        .pcontent {
+          padding: 16px 14px 28px;
+        }
+        #hint {
+          font-size: 8px;
+          letter-spacing: 2px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        #book-wrap:not(.opened) {
+          animation: none;
+        }
+        #lamp {
+          animation: none;
+        }
+        #front-cover {
+          transition-duration: 0.4s;
+        }
+        .cpiece {
+          animation-duration: 0.01s;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="loverlay">
+      <div class="loader-ring"></div>
+      <div class="lt">opening...</div>
+    </div>
+
+    <div id="scene">
+      <div id="lamp"></div>
+      <div id="grain"></div>
+      <div class="dprop" id="dp-mug"></div>
+      <div class="dprop" id="dp-pen"></div>
+      <div class="dprop" id="dp-papers"></div>
+      <canvas id="dust"></canvas>
+
+      <div id="book-wrap">
+        <!-- ═══ COVER STATE ═══ -->
+        <div id="cover-assembly">
+          <div id="back-cover"></div>
+
+          <div
+            id="front-cover"
+            role="button"
+            tabindex="0"
+            aria-label="Open diary"
+            title="Click to open"
+          >
+            <div id="cover-front">
+              <div class="cframe cframe1"></div>
+              <div class="cframe cframe2"></div>
+              <div
+                class="worn"
+                style="
+                  width: 22px;
+                  height: 12px;
+                  top: 9px;
+                  left: 36px;
+                  transform: rotate(-8deg);
+                "
+              ></div>
+              <div
+                class="worn"
+                style="
+                  width: 14px;
+                  height: 9px;
+                  bottom: 12px;
+                  right: 28px;
+                  transform: rotate(4deg);
+                "
+              ></div>
+              <div
+                class="worn"
+                style="
+                  width: 9px;
+                  height: 5px;
+                  top: 44px;
+                  right: 34px;
+                  transform: rotate(-3deg);
+                  opacity: 0.07;
+                "
+              ></div>
+              <div
+                class="worn"
+                style="
+                  width: 18px;
+                  height: 8px;
+                  top: 55%;
+                  left: 18px;
+                  transform: rotate(-5deg);
+                  opacity: 0.12;
+                "
+              ></div>
+              <div class="corn cTL">
+                <svg viewBox="0 0 48 48" fill="none">
+                  <path
+                    d="M4 4 Q4 24 24 24"
+                    stroke="#B8943C"
+                    stroke-width="1.2"
+                    fill="none"
+                    opacity=".85"
+                  />
+                  <path
+                    d="M24 24 Q4 24 4 44"
+                    stroke="#B8943C"
+                    stroke-width="1.2"
+                    fill="none"
+                    opacity=".85"
+                  />
+                  <circle cx="4" cy="4" r="2.2" fill="#B8943C" opacity=".75" />
+                  <circle
+                    cx="14"
+                    cy="14"
+                    r="1.3"
+                    fill="#B8943C"
+                    opacity=".38"
+                  />
+                </svg>
+              </div>
+              <div class="corn cTR">
+                <svg viewBox="0 0 48 48" fill="none">
+                  <path
+                    d="M4 4 Q4 24 24 24"
+                    stroke="#B8943C"
+                    stroke-width="1.2"
+                    fill="none"
+                    opacity=".85"
+                  />
+                  <path
+                    d="M24 24 Q4 24 4 44"
+                    stroke="#B8943C"
+                    stroke-width="1.2"
+                    fill="none"
+                    opacity=".85"
+                  />
+                  <circle cx="4" cy="4" r="2.2" fill="#B8943C" opacity=".75" />
+                </svg>
+              </div>
+              <div class="corn cBL">
+                <svg viewBox="0 0 48 48" fill="none">
+                  <path
+                    d="M4 4 Q4 24 24 24"
+                    stroke="#B8943C"
+                    stroke-width="1.2"
+                    fill="none"
+                    opacity=".85"
+                  />
+                  <path
+                    d="M24 24 Q4 24 4 44"
+                    stroke="#B8943C"
+                    stroke-width="1.2"
+                    fill="none"
+                    opacity=".85"
+                  />
+                  <circle cx="4" cy="4" r="2.2" fill="#B8943C" opacity=".75" />
+                </svg>
+              </div>
+              <div class="corn cBR">
+                <svg viewBox="0 0 48 48" fill="none">
+                  <path
+                    d="M4 4 Q4 24 24 24"
+                    stroke="#B8943C"
+                    stroke-width="1.2"
+                    fill="none"
+                    opacity=".85"
+                  />
+                  <path
+                    d="M24 24 Q4 24 4 44"
+                    stroke="#B8943C"
+                    stroke-width="1.2"
+                    fill="none"
+                    opacity=".85"
+                  />
+                  <circle cx="4" cy="4" r="2.2" fill="#B8943C" opacity=".75" />
+                </svg>
+              </div>
+              <div id="cover-text">
+                <div class="c-prop">Property of:</div>
+                <div class="c-rule"></div>
+                <div class="c-title">A very confused<br />person.</div>
+                <div class="c-rule"></div>
+                <div class="c-sub">private. do not read.</div>
+              </div>
+            </div>
+            <div id="cover-back"></div>
+          </div>
+
+          <div id="hint">↑ click to open ↑</div>
+          <div id="swipe-hint">tap to open</div>
+        </div>
+
+        <!-- ═══ OPEN BOOK ═══ -->
+        <div id="book-open" class="not-built">
+          <div id="book-bg"></div>
+          <div class="book">
+            <div class="pages" id="pages"></div>
+          </div>
+          <div id="book-shadow"></div>
+        </div>
+      </div>
+      <!-- /book-wrap -->
+    </div>
+    <!-- /scene -->
+
+    <div id="mobile-nav">
+      <button class="mnav-btn" id="mnav-prev" aria-label="Previous page">
+        ‹
+      </button>
+      <span id="mnav-page-indicator">1 / 18</span>
+      <button class="mnav-btn" id="mnav-next" aria-label="Next page">›</button>
+    </div>
+
+    <button id="mbtn" title="Toggle music" aria-label="Toggle music">♪</button>
+
+    <script>
+      const isMobile = () => window.innerWidth <= 600;
+
+      let AC = null;
+      let musicGain = null,
+        musicOn = false;
+      let _lastTurnTime = 0;
+
+      function initAC() {
+        if (!AC) {
+          try {
+            AC = new (window.AudioContext || window.webkitAudioContext)();
+          } catch (e) {}
+        }
+        if (AC && AC.state === "suspended") AC.resume();
+      }
+
+      function sndPageTurn() {
+        if (!AC) return;
+        const now = AC.currentTime;
+        if (now - _lastTurnTime < 0.12) return;
+        _lastTurnTime = now;
+        const vol = DIARY.turnSoundVolume;
+        try {
+          const dur = 0.38;
+          const len = Math.ceil(AC.sampleRate * dur);
+          const buf1 = AC.createBuffer(1, len, AC.sampleRate);
+          const d1 = buf1.getChannelData(0);
+          for (let i = 0; i < len; i++) {
+            const t = i / AC.sampleRate;
+            d1[i] = (Math.random() * 2 - 1) * Math.exp(-t * 14) * 0.9;
+          }
+          const src1 = AC.createBufferSource();
+          const bp1 = AC.createBiquadFilter();
+          const g1 = AC.createGain();
+          bp1.type = "bandpass";
+          bp1.frequency.value = 1800;
+          bp1.Q.value = 0.6;
+          g1.gain.setValueAtTime(0, now);
+          g1.gain.linearRampToValueAtTime(vol * 0.7, now + 0.012);
+          g1.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+          src1.buffer = buf1;
+          src1.connect(bp1);
+          bp1.connect(g1);
+          g1.connect(AC.destination);
+          src1.start(now);
+          src1.stop(now + dur + 0.05);
+
+          const dur2 = 0.22;
+          const len2 = Math.ceil(AC.sampleRate * dur2);
+          const buf2 = AC.createBuffer(1, len2, AC.sampleRate);
+          const d2 = buf2.getChannelData(0);
+          for (let i = 0; i < len2; i++) {
+            const t = i / AC.sampleRate;
+            d2[i] = (Math.random() * 2 - 1) * Math.exp(-t * 22) * 0.55;
+          }
+          const src2 = AC.createBufferSource();
+          const bp2 = AC.createBiquadFilter();
+          const g2 = AC.createGain();
+          bp2.type = "bandpass";
+          bp2.frequency.value = 320;
+          bp2.Q.value = 0.9;
+          g2.gain.setValueAtTime(0, now);
+          g2.gain.linearRampToValueAtTime(vol * 0.45, now + 0.008);
+          g2.gain.exponentialRampToValueAtTime(0.0001, now + dur2);
+          src2.buffer = buf2;
+          src2.connect(bp2);
+          bp2.connect(g2);
+          g2.connect(AC.destination);
+          src2.start(now);
+          src2.stop(now + dur2 + 0.05);
+        } catch (e) {}
+      }
+
+      function mkPhoto(key, w, h, opts = {}) {
+        const src = DIARY.photos[key];
+        const pw = document.createElement("div");
+        pw.className = "photo";
+        const rot = opts.rot || Math.random() * 6 - 3;
+        pw.style.cssText = `width:${w}px;height:${h}px;transform:rotate(${rot}deg);${opts.extra || ""}`;
+        if (src) {
+          const img = document.createElement("img");
+          img.src = src;
+          img.className = "photo-img";
+          img.alt = "";
+          pw.appendChild(img);
+        } else {
+          const ph = document.createElement("div");
+          ph.className = "ph-empty";
+          ph.innerHTML = `<div class="ph-ico">📷</div><span>${opts.label || "insert photo"}</span>`;
+          pw.appendChild(ph);
+          const lbl = document.createElement("label");
+          lbl.className = "ph-upload";
+          const inp = document.createElement("input");
+          inp.type = "file";
+          inp.accept = "image/*";
+          inp.dataset.key = key;
+          lbl.appendChild(inp);
+          pw.appendChild(lbl);
+        }
+        if (opts.tape !== false) {
+          const t = document.createElement("div");
+          const tc = opts.tapeColor === "b" ? "tape tape-b" : "tape tape-y";
+          t.className = tc + " tape-h";
+          t.style.setProperty("--r", (opts.tapeRot || 0) + "deg");
+          t.style.setProperty("--t", opts.tapeT || "-7px");
+          t.style.setProperty("--l", opts.tapeL || "50%");
+          pw.appendChild(t);
+        }
+        return pw;
+      }
+      function mkAnnot(text, style, cls = "") {
+        const a = document.createElement("div");
+        a.className = "annot " + cls;
+        a.textContent = text;
+        a.setAttribute("style", style);
+        return a;
+      }
+      function mkSticky(html, style, cls = "") {
+        const s = document.createElement("div");
+        s.className = "sticky " + cls;
+        s.innerHTML = html;
+        s.setAttribute("style", style);
+        return s;
+      }
+      function mkDoodle(svg, style) {
+        const d = document.createElement("div");
+        d.className = "doodle";
+        d.innerHTML = svg;
+        d.setAttribute("style", style);
+        return d;
+      }
+      function addStain(el) {
+        const n = 2 + Math.floor(Math.random() * 2);
+        for (let i = 0; i < n; i++) {
+          const s = document.createElement("div");
+          const w = 30 + Math.random() * 55,
+            h2 = w * (0.45 + Math.random() * 0.45);
+          const colors = [
+            "rgba(160,120,50,.08)",
+            "rgba(140,100,40,.06)",
+            "rgba(100,70,30,.05)",
+          ];
+          const c = colors[Math.floor(Math.random() * colors.length)];
+          s.style.cssText = `position:absolute;border-radius:50%;pointer-events:none;z-index:1;width:${w}px;height:${h2}px;left:${5 + Math.random() * 82}%;top:${4 + Math.random() * 82}%;background:radial-gradient(${c},transparent 70%);transform:rotate(${Math.random() * 360}deg)`;
+          el.appendChild(s);
+        }
+      }
+
+      const PAGE_BUILDERS = [
+        /* p1 */ (el) => {
+          el.innerHTML = `<div class="pcontent"><div class="t-date">—</div><div class="t-body">Dear Diary,<span class="br"></span>Today I made a terrible decision.<span class="br-sm"></span>I decided to talk to her.<span class="br"></span>I know.<span class="br-sm"></span>Huge mistake.</div></div><div class="pg-num">1</div>`;
+          el.appendChild(
+            mkDoodle(
+              `<svg width="65" height="85" viewBox="0 0 65 85"><text x="4" y="38" font-size="36" font-family="serif" fill="#3C1C08" opacity=".09">?</text><text x="34" y="62" font-size="22" font-family="serif" fill="#3C1C08" opacity=".06">?</text></svg>`,
+              "position:absolute;bottom:38px;right:16px;z-index:3",
+            ),
+          );
+          addStain(el);
+        },
+        /* p2 */ (el) => {
+          el.innerHTML = `<div class="pcontent"><div class="t-date">—</div><div class="t-body">She had been in my class for months.<span class="br"></span>So naturally...<span class="br-sm"></span>I waited months before actually talking to her.<span class="br"></span><span class="t-small t-red">Peak intelligence.</span></div></div><div class="pg-num">2</div>`;
+          const ph = mkPhoto("p_general", 148, 120, {
+            extra: "position:absolute;bottom:50px;right:18px;",
+            tapeL: "50%",
+            label: "insert photo",
+          });
+          el.appendChild(ph);
+          el.appendChild(
+            mkAnnot(
+              "← us. probably.",
+              "position:absolute;bottom:34px;right:26px;transform:rotate(-2deg)",
+            ),
+          );
+          addStain(el);
+        },
+        /* p3 */ (el) => {
+          el.innerHTML = `<div class="pcontent"><div class="case-label">Observation #1</div><div class="t-big">This girl<br/>is impossible.</div></div><div class="pg-num">3</div>`;
+          el.appendChild(
+            mkDoodle(
+              `<svg width="95" height="55" viewBox="0 0 95 55" fill="none"><path d="M8 28 Q22 9 37 28 Q52 47 67 28 Q82 9 92 28" stroke="#8B1818" stroke-width="1.4" fill="none" opacity=".28" stroke-dasharray="3 3"/></svg>`,
+              "position:absolute;bottom:78px;left:18px",
+            ),
+          );
+          el.appendChild(
+            mkSticky(
+              "Seriously.<br/>How??",
+              "position:absolute;bottom:50px;left:24px;--r:-4deg;width:88px",
+            ),
+          );
+          addStain(el);
+        },
+        /* p4 */ (el) => {
+          el.innerHTML = `<div class="pcontent"><div class="t-date">—</div><div class="t-body">Most people are easy.<span class="br-sm"></span>You talk. You get it. Done.<span class="br"></span>Not her.<span class="br"></span>The more I talked to her,<span class="br-sm"></span>the less I understood.<span class="br"></span><span class="t-small t-blue">Somehow that was the interesting part.</span></div></div><div class="pg-num">4</div>`;
+          const ph = mkPhoto("p_eyes", 142, 128, {
+            extra: "position:absolute;bottom:54px;right:16px;",
+            tapeColor: "b",
+            tapeRot: 8,
+            label: "eyes photo",
+          });
+          el.appendChild(ph);
+          el.appendChild(
+            mkAnnot(
+              "evidence ↑",
+              "position:absolute;bottom:37px;right:20px;transform:rotate(2deg)",
+            ),
+          );
+          addStain(el);
+        },
+        /* p5 */ (el) => {
+          el.innerHTML = `<div class="pcontent"><div class="case-label">Case File #03</div><div class="t-body" style="font-size:14px;line-height:1.92"><b>Subject:</b> <span class="squiggle">Samita</span><br/><b>Status:</b> Still confusing<br/><b>Energy:</b> Unknown<br/><b>Threat level:</b> Moderate<br/><b>Sleepiness (8am):</b> 100%<br/><b>Chaotic index:</b> very high</div></div><div class="pg-num">5</div>`;
+          el.appendChild(
+            mkSticky(
+              "update:<br/>threat level<br/>upgraded.",
+              "position:absolute;bottom:58px;right:16px;--r:3deg;width:98px",
+            ),
+          );
+          addStain(el);
+        },
+        /* p6 */ (el) => {
+          el.innerHTML = `<div class="pcontent"><div class="t-date">—</div></div><div class="pg-num">6</div>`;
+          const ph = mkPhoto("p_funny", 168, 142, {
+            extra: "position:absolute;top:36px;right:16px;",
+            rot: -2.8,
+            label: "funny photo",
+          });
+          el.appendChild(ph);
+          el.appendChild(
+            mkAnnot(
+              "THE SCIENTIFIC COMMUNITY\nSHOULD STUDY THIS.",
+              "position:absolute;top:205px;left:14px;font-size:10px;max-width:155px;line-height:1.5",
+              "red",
+            ),
+          );
+          addStain(el);
+        },
+        /* p7 */ (el) => {
+          el.innerHTML = `<div class="pcontent"><div class="t-date">—</div><div class="t-body">She can somehow be:<span class="br"></span>sleepy,<br/>chaotic,<br/>confused,<br/>and the <span class="squiggle">loudest person</span><br/>in the room<span class="br-sm"></span>at exactly the same time.</div></div><div class="pg-num">7</div>`;
+          el.appendChild(
+            mkSticky(
+              "a talent.<br/>genuinely.",
+              "position:absolute;bottom:66px;right:14px;--r:-3deg;width:108px",
+            ),
+          );
+          addStain(el);
+        },
+        /* p8 */ (el) => {
+          el.innerHTML = `<div class="pcontent"><div class="t-date">—</div></div><div class="pg-num">8</div>`;
+          el.appendChild(
+            mkPhoto("p_sleepy", 134, 108, {
+              extra: "position:absolute;top:40px;left:18px;",
+              rot: -3.8,
+              tape: true,
+              label: "sleepy photo",
+            }),
+          );
+          el.appendChild(
+            mkPhoto("p_candid1", 124, 102, {
+              extra: "position:absolute;top:76px;right:16px;",
+              tapeColor: "b",
+              label: "candid photo",
+              tapeRot: -5,
+              rot: 3.2,
+            }),
+          );
+          el.appendChild(
+            mkAnnot(
+              "every single morning ↑",
+              "position:absolute;top:172px;left:12px;font-size:11px;transform:rotate(-2deg)",
+            ),
+          );
+          el.appendChild(
+            mkAnnot(
+              "↑ also every morning",
+              "position:absolute;top:198px;right:8px;font-size:11px;transform:rotate(2deg)",
+            ),
+          );
+          addStain(el);
+        },
+        /* p9 */ (el) => {
+          el.innerHTML = `<div class="pcontent"><div class="t-date">—</div><div class="t-body">Somewhere between<span class="br-sm"></span>the random conversations,<br/>the food,<br/>the complete nonsense,<span class="br-sm"></span>and whatever this friendship became—<span class="br"></span>she somehow became important.</div></div><div class="pg-num">9</div>`;
+          addStain(el);
+        },
+        /* p10 */ (el) => {
+          el.innerHTML = `<div class="pcontent"><div class="t-date">—</div></div><div class="pg-num">10</div>`;
+          const ph = mkPhoto("p_candid2", 152, 142, {
+            extra: "position:absolute;top:34px;left:50%;margin-left:-76px;",
+            rot: 1.4,
+            label: "candid photo",
+          });
+          el.appendChild(ph);
+          el.appendChild(
+            mkAnnot(
+              "I still don't know what\ngoes on inside her head.",
+              "position:absolute;top:208px;left:16px;font-size:12px;line-height:1.55;max-width:195px",
+            ),
+          );
+          el.appendChild(
+            mkAnnot(
+              "favorite thing, actually.",
+              "position:absolute;top:264px;right:18px;font-size:11.5px;font-style:italic;color:#8B1818",
+            ),
+          );
+          addStain(el);
+        },
+        /* p11 */ (el) => {
+          el.innerHTML = `<div class="pcontent"><div class="t-date">June 12.</div><div class="t-body">Problem.<span class="br"></span>Her birthday is in two days.<span class="br"></span><span class="t-small">I should probably do something about that.</span></div></div><div class="pg-num">11</div>`;
+          el.appendChild(
+            mkDoodle(
+              `<svg width="155" height="56" viewBox="0 0 155 56" fill="none"><ellipse cx="77" cy="28" rx="68" ry="20" stroke="#8B1818" stroke-width="1.4" fill="none" opacity=".32" stroke-dasharray="4 3"/><text x="12" y="33" font-family="'JetBrains Mono',monospace" font-size="10" fill="#8B1818" opacity=".55">⚠ DO SOMETHING</text></svg>`,
+              "position:absolute;bottom:82px;left:8px",
+            ),
+          );
+          el.appendChild(
+            mkSticky(
+              "get a gift??",
+              "position:absolute;bottom:52px;right:18px;--r:-5deg;font-size:12px",
+            ),
+          );
+          addStain(el);
+        },
+        /* p12 */ (el) => {
+          el.innerHTML = `<div class="pcontent"><div class="t-date">June 13.</div><div class="t-body">Update.<span class="br"></span>I still have absolutely<br/>no idea what to get her.<span class="br"></span><span class="t-small t-red">this is going great.</span></div><div style="margin-top:14px;padding:10px 12px;border:1.4px dashed var(--ink-ghost);border-radius:2px;font-family:var(--font-scrawl);font-size:13px;color:var(--ink-faded);line-height:1.7;position:absolute;left:22px;right:22px;top:186px">Options considered:<br/>✗ flowers (no)<br/>✗ food (obvious)<br/>✗ nothing (tempting)<br/>✗ ???</div></div><div class="pg-num">12</div>`;
+          addStain(el);
+        },
+        /* p13 */ (el) => {
+          el.innerHTML = `<div class="pcontent"><div class="t-date">June 14.</div><div class="t-big" style="font-size:40px;margin-top:18px">Well.</div><div class="t-big" style="font-size:34px;margin-top:7px;color:var(--red-pen)">Oops.</div></div><div class="pg-num">13</div>`;
+          el.appendChild(
+            mkSticky(
+              "it is her birthday.<br/>right now.<br/>as i write this.",
+              "position:absolute;bottom:60px;left:22px;--r:3deg;font-size:11.5px",
+            ),
+          );
+          addStain(el);
+        },
+        /* p14 */ (el) => {
+          el.innerHTML = `<div class="pcontent"><div class="t-date">June 14.</div><div class="t-body">So instead of buying something...<span class="br"></span>I made something.<span class="br"></span><span class="t-small">Which is either very thoughtful,</span><span class="br-sm"></span><span class="t-small">or very lazy.</span><span class="br-sm"></span><span class="t-small t-red">Mostly both.</span></div></div><div class="pg-num">14</div>`;
+          el.appendChild(
+            mkAnnot(
+              "→ turn the page →",
+              "position:absolute;bottom:50px;right:10px;font-size:11.5px;transform:rotate(-2deg)",
+            ),
+          );
+          addStain(el);
+        },
+        /* p15 */ (el) => {
+          el.innerHTML = `<div class="pcontent"><div class="t-date">June 14.</div><div class="t-body" style="font-size:14px;line-height:1.92;color:var(--ink-faded)">I finally figured out what to get her.</div></div><div class="pg-num">15</div>`;
+          addStain(el);
+        },
+        /* p16 — REVEAL */ (el) => {
+          const rc = document.createElement("div");
+          rc.id = "reveal-container";
+          rc.innerHTML = `<div class="rev-hb">happy birthday</div><div class="rev-name">${DIARY.nickname}.</div><div class="rev-lines">Thank you for the laughs.<br/>Thank you for the chaos.<br/>Thank you for being<br/>one of my favorite people.</div><div class="rev-sign">Now stop overthinking.<br/>Go enjoy your birthday, idiot. 🎂</div>`;
+          el.appendChild(rc);
+          el.dataset.isReveal = "1";
+          const pn = document.createElement("div");
+          pn.className = "pg-num";
+          pn.textContent = "16";
+          el.appendChild(pn);
+          addStain(el);
+        },
+        /* p17 */ (el) => {
+          el.innerHTML = `<div class="pcontent"><div class="t-date">— for you —</div><div class="t-body" style="font-size:14px;line-height:2">One last thing.<span class="br"></span>Couldn't fit everything<br/>in words.<span class="br"></span>So I recorded something.<span class="br-sm"></span><span class="t-small">( press play )</span></div></div><div class="pg-num">17</div>`;
+          el.appendChild(
+            mkAnnot(
+              "→ over there →",
+              "position:absolute;bottom:78px;right:14px;font-size:12.5px;transform:rotate(-3deg)",
+            ),
+          );
+          addStain(el);
+        },
+        /* p18 — VIDEO */ (el) => {
+          el.innerHTML = `<div class="pcontent"><div class="t-date">— a message —</div></div><div class="pg-num">18</div>`;
+          const vf = document.createElement("div");
+          vf.className = "vid-frame";
+          vf.id = "vid-frame";
+          if (DIARY.photos.p_video) {
+            vf.innerHTML = `<video controls src="${DIARY.photos.p_video}"></video>`;
+          } else {
+            vf.innerHTML = `<div class="vid-ph"><div class="vid-play">▶</div><span>birthday video</span><span style="font-size:8px;opacity:.45;margin-top:2px">click to upload</span></div><label class="vid-upload"><input type="file" accept="video/*" id="vid-inp"/></label>`;
+          }
+          el.appendChild(vf);
+          const sig = document.createElement("div");
+          sig.style.cssText =
+            "position:absolute;bottom:20px;left:0;right:0;text-align:center;font-family:var(--font-scrawl);font-size:13px;color:var(--ink-faded);opacity:.68;font-style:italic";
+          sig.textContent = "happy birthday 🎂";
+          el.appendChild(sig);
+          addStain(el);
+        },
+      ];
+
+      const TOTAL_PAGES = PAGE_BUILDERS.length;
+      const TOTAL_LEAVES = Math.ceil(TOTAL_PAGES / 2);
+
+      let revealDone = false;
+      let currentLeaf = 0; // number of leaves currently flipped open
+
+      function updateMobileNav() {
+        const ind = document.getElementById("mnav-page-indicator");
+        if (!ind) return;
+        const shown = Math.min(currentLeaf * 2 + 1, TOTAL_PAGES);
+        ind.textContent = shown + " / " + TOTAL_PAGES;
+      }
+
+      function buildPages() {
+        const container = document.getElementById("pages");
+        container.innerHTML = "";
+        for (let i = 0; i < TOTAL_LEAVES; i++) {
+          const leafNum = i + 1;
+          const frontPageNum = i * 2 + 1;
+          const backPageNum = i * 2 + 2;
+
+          const leaf = document.createElement("div");
+          leaf.className = "leaf";
+          leaf.dataset.leaf = leafNum;
+          leaf.style.zIndex = TOTAL_LEAVES - i;
+
+          const front = document.createElement("div");
+          front.className = "face front";
+          if (PAGE_BUILDERS[frontPageNum - 1])
+            PAGE_BUILDERS[frontPageNum - 1](front);
+
+          const back = document.createElement("div");
+          back.className = "face back";
+          if (PAGE_BUILDERS[backPageNum - 1])
+            PAGE_BUILDERS[backPageNum - 1](back);
+
+          leaf.appendChild(front);
+          leaf.appendChild(back);
+          leaf.addEventListener("click", () =>
+            toggleLeaf(leaf, leafNum, backPageNum),
+          );
+          container.appendChild(leaf);
+        }
+      }
+
+      function toggleLeaf(leaf, leafNum, backPageNum) {
+        initAC();
+        sndPageTurn();
+        if (!leaf.classList.contains("flipped")) {
+          leaf.classList.add("flipped");
+          leaf.style.zIndex = TOTAL_LEAVES + leafNum;
+          currentLeaf = Math.max(currentLeaf, leafNum);
+          if (backPageNum === 16 && !revealDone) {
+            setTimeout(animateReveal, 700);
+          }
+        } else {
+          leaf.classList.remove("flipped");
+          leaf.style.zIndex = TOTAL_LEAVES - leafNum + 1;
+          currentLeaf = leafNum - 1;
+        }
+        updateMobileNav();
+        bindUploads();
+      }
+
+      function flipToLeaf(target) {
+        const leaves = document.querySelectorAll("#pages .leaf");
+        for (const leaf of leaves) {
+          const n = parseInt(leaf.dataset.leaf, 10);
+          const shouldFlip = n <= target;
+          if (shouldFlip !== leaf.classList.contains("flipped")) {
+            leaf.click();
+          }
+        }
+      }
+      function flipNext() {
+        if (currentLeaf < TOTAL_LEAVES) flipToLeaf(currentLeaf + 1);
+      }
+      function flipPrev() {
+        if (currentLeaf > 0) flipToLeaf(currentLeaf - 1);
+      }
+
+      function bindUploads() {
+        document.querySelectorAll(".ph-upload input").forEach((inp) => {
+          if (!inp.dataset.bound) {
+            inp.dataset.bound = "1";
+            inp.addEventListener("change", uploadPhoto);
+          }
+        });
+        const vi = document.getElementById("vid-inp");
+        if (vi && !vi.dataset.bound) {
+          vi.dataset.bound = "1";
+          vi.addEventListener("change", uploadVideo);
+        }
+      }
+      function uploadPhoto(e) {
+        const f = e.target.files[0];
+        if (!f) return;
+        const key = e.target.dataset.key;
+        const url = URL.createObjectURL(f);
+        DIARY.photos[key] = url;
+        const wrap = e.target.closest(".photo");
+        wrap.querySelector(".ph-empty")?.remove();
+        wrap.querySelector(".ph-upload")?.remove();
+        const img = document.createElement("img");
+        img.src = url;
+        img.className = "photo-img";
+        img.alt = "";
+        wrap.insertBefore(img, wrap.firstChild);
+      }
+      function uploadVideo(e) {
+        const f = e.target.files[0];
+        if (!f) return;
+        const url = URL.createObjectURL(f);
+        const vf = document.getElementById("vid-frame");
+        if (vf)
+          vf.innerHTML = `<video controls src="${url}" style="width:100%;height:100%;object-fit:cover"></video>`;
+      }
+
+      addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+          initAC();
+          flipNext();
+        }
+        if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+          initAC();
+          flipPrev();
+        }
+      });
+      document.getElementById("front-cover").addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          openDiary();
+        }
+      });
+
+      document.getElementById("mnav-prev").addEventListener("click", () => {
+        initAC();
+        flipPrev();
+      });
+      document.getElementById("mnav-next").addEventListener("click", () => {
+        initAC();
+        flipNext();
+      });
+
+      let touchStartX = 0,
+        touchStartY = 0;
+      document.getElementById("scene").addEventListener(
+        "touchstart",
+        (e) => {
+          touchStartX = e.touches[0].clientX;
+          touchStartY = e.touches[0].clientY;
+        },
+        { passive: true },
+      );
+      document.getElementById("scene").addEventListener(
+        "touchend",
+        (e) => {
+          const dx = e.changedTouches[0].clientX - touchStartX;
+          const dy = e.changedTouches[0].clientY - touchStartY;
+          if (
+            Math.abs(dx) > Math.abs(dy) + 10 &&
+            Math.abs(dx) > 50 &&
+            document.getElementById("book-open").style.display !== "none"
+          ) {
+            initAC();
+            if (dx < 0) flipNext();
+            else flipPrev();
+          }
+        },
+        { passive: true },
+      );
+
+      function animateReveal() {
+        const rc = document.getElementById("reveal-container");
+        if (!rc || revealDone) return;
+        revealDone = true;
+        rc.classList.add("show");
+        setTimeout(() => rc.querySelector(".rev-hb").classList.add("in"), 120);
+        setTimeout(
+          () => rc.querySelector(".rev-name").classList.add("in"),
+          420,
+        );
+        setTimeout(
+          () => rc.querySelector(".rev-lines").classList.add("in"),
+          840,
+        );
+        setTimeout(
+          () => rc.querySelector(".rev-sign").classList.add("in"),
+          1440,
+        );
+        setTimeout(launchConfetti, 620);
+        setTimeout(() => {
+          initAC();
+          sndScratch();
+        }, 860);
+      }
+
+      function launchConfetti() {
+        const cols = [
+          "#B8943C",
+          "#D4B060",
+          "#5C1212",
+          "#F2E8D0",
+          "#C4A0A0",
+          "#E0D0A0",
+          "#9ABCDB",
+          "#E8C890",
+        ];
+        for (let i = 0; i < 80; i++) {
+          const c = document.createElement("div");
+          c.className = "cpiece";
+          const w = 5 + Math.random() * 10,
+            h2 = 5 + Math.random() * 10;
+          c.style.cssText = `left:${Math.random() * 100}vw;top:${-18 + Math.random() * 28}px;width:${w}px;height:${h2}px;background:${cols[~~(Math.random() * cols.length)]};border-radius:${Math.random() > 0.5 ? "50%" : "2px"};animation-duration:${2.8 + Math.random() * 3.2}s;animation-delay:${Math.random() * 1.1}s;`;
+          document.body.appendChild(c);
+          setTimeout(() => c.remove(), 6800);
+        }
+      }
+
+      function openDiary() {
+        initAC();
+        sndOpen();
+
+        const hint = document.getElementById("hint");
+        const swipeHint = document.getElementById("swipe-hint");
+        if (hint) {
+          hint.style.transition = "opacity .5s ease";
+          hint.style.opacity = "0";
+        }
+        if (swipeHint) swipeHint.style.opacity = "0";
+
+        const cover = document.getElementById("front-cover");
+        const coverAssembly = document.getElementById("cover-assembly");
+        const bw = document.getElementById("book-wrap");
+
+        // Flip the cover open — book-open is already visible underneath
+        cover.classList.add("opening");
+
+        setTimeout(() => {
+          cover.classList.add("open");
+          cover.classList.remove("opening");
+
+          bw.classList.add("opened");
+          bw.style.animation = "none";
+
+          // Once cover is fully flipped away, hide the whole cover-assembly
+          setTimeout(() => {
+            coverAssembly.classList.add("done");
+          }, 200);
+
+          scatterDust();
+          setTimeout(() => startMusic(), 300);
+        }, 980);
+      }
+
+      document.getElementById("front-cover").addEventListener("click", openDiary);
+
+      function startMusic() {
+        if (musicOn || !AC) return;
+        musicOn = true;
+        musicGain = AC.createGain();
+        musicGain.gain.setValueAtTime(0, AC.currentTime);
+        musicGain.gain.linearRampToValueAtTime(
+          DIARY.musicVolume,
+          AC.currentTime + 3,
+        );
+
+        const conv = AC.createConvolver();
+        const rLen = AC.sampleRate * 2.8;
+        const rBuf = AC.createBuffer(2, rLen, AC.sampleRate);
+        for (let c = 0; c < 2; c++) {
+          const d = rBuf.getChannelData(c);
+          for (let i = 0; i < rLen; i++)
+            d[i] =
+              (Math.random() * 2 - 1) * Math.exp(-i / (AC.sampleRate * 1.1));
+        }
+        conv.buffer = rBuf;
+
+        const dry = AC.createGain();
+        dry.gain.value = 0.6;
+        const wet = AC.createGain();
+        wet.gain.value = 0.4;
+        conv.connect(wet);
+        wet.connect(musicGain);
+        dry.connect(musicGain);
+        musicGain.connect(AC.destination);
+
+        const seqs = [
+          [261.63, 329.63, 392.0, 523.25],
+          [246.94, 311.13, 369.99, 493.88],
+          [220.0, 277.18, 329.63, 440.0],
+          [196.0, 246.94, 293.66, 392.0],
+        ];
+        let si = 0;
+        const nL = 2.5;
+        function chord(time, notes) {
+          notes.forEach((f, hi) => {
+            const o = AC.createOscillator();
+            const g = AC.createGain();
+            o.type = hi === 0 ? "triangle" : "sine";
+            o.frequency.value = f;
+            const amps = [0.07, 0.022, 0.008, 0.004];
+            g.gain.setValueAtTime(0, time);
+            g.gain.linearRampToValueAtTime(amps[hi] || 0.003, time + 0.06);
+            g.gain.exponentialRampToValueAtTime(0.0001, time + nL);
+            o.connect(g);
+            g.connect(dry);
+            g.connect(conv);
+            o.start(time);
+            o.stop(time + nL + 0.2);
+          });
+        }
+        function tick() {
+          if (!musicOn) return;
+          chord(AC.currentTime, seqs[si % seqs.length]);
+          si++;
+          setTimeout(tick, (nL - 0.08) * 1000);
+        }
+        tick();
+      }
+      function stopMusic() {
+        if (!musicGain) return;
+        musicGain.gain.linearRampToValueAtTime(0, AC.currentTime + 1.4);
+        musicOn = false;
+      }
+      function sndOpen() {
+        if (!AC) return;
+        try {
+          const buf = AC.createBuffer(2, AC.sampleRate * 0.45, AC.sampleRate);
+          for (let c = 0; c < 2; c++) {
+            const d = buf.getChannelData(c);
+            for (let i = 0; i < d.length; i++) {
+              const t = i / AC.sampleRate;
+              d[i] =
+                (Math.random() - 0.5) * 0.55 * Math.exp(-t * 11) +
+                (Math.sin(2 * Math.PI * 78 * t) +
+                  Math.sin(2 * Math.PI * 52 * t)) *
+                  0.07 *
+                  Math.exp(-t * 7);
+            }
+          }
+          const s = AC.createBufferSource();
+          const g = AC.createGain();
+          g.gain.value = 0.5;
+          s.buffer = buf;
+          s.connect(g);
+          g.connect(AC.destination);
+          s.start();
+        } catch (e) {}
+      }
+      function sndScratch() {
+        if (!AC) return;
+        try {
+          let t = AC.currentTime;
+          for (let i = 0; i < 6; i++) {
+            const buf = AC.createBuffer(
+              1,
+              Math.ceil(AC.sampleRate * 0.065),
+              AC.sampleRate,
+            );
+            const d = buf.getChannelData(0);
+            for (let j = 0; j < d.length; j++)
+              d[j] =
+                (Math.random() * 2 - 1) *
+                Math.exp(-j / (AC.sampleRate * 0.022)) *
+                0.17;
+            const s = AC.createBufferSource();
+            const filt = AC.createBiquadFilter();
+            filt.type = "highpass";
+            filt.frequency.value = 4200;
+            const g = AC.createGain();
+            g.gain.value = 0.35;
+            s.buffer = buf;
+            s.connect(filt);
+            filt.connect(g);
+            g.connect(AC.destination);
+            s.start(t);
+            t += 0.085 + Math.random() * 0.04;
+          }
+        } catch (e) {}
+      }
+
+      document.getElementById("mbtn").addEventListener("click", () => {
+        initAC();
+        if (musicOn) {
+          stopMusic();
+          document.getElementById("mbtn").textContent = "♩";
+        } else {
+          startMusic();
+          document.getElementById("mbtn").textContent = "♪";
+        }
+      });
+
+      let dustPts = [];
+      function initDust() {
+        const c = document.getElementById("dust");
+        const ctx = c.getContext("2d");
+        let W, H;
+        function resize() {
+          W = c.width = innerWidth;
+          H = c.height = innerHeight;
+        }
+        addEventListener("resize", resize);
+        resize();
+        dustPts = Array.from({ length: DIARY.particleCount }, () => ({
+          x: Math.random() * innerWidth,
+          y: Math.random() * innerHeight,
+          vx: (Math.random() - 0.5) * 0.12,
+          vy: -Math.random() * 0.2 - 0.04,
+          r: Math.random() * 1.7 + 0.3,
+          a: Math.random() * 0.28 + 0.05,
+          life: Math.random(),
+        }));
+        (function frame() {
+          ctx.clearRect(0, 0, W, H);
+          for (const p of dustPts) {
+            p.life += 0.0016;
+            p.x += p.vx + Math.sin(p.life * 1.9) * 0.055;
+            p.y += p.vy;
+            if (p.y < -5) {
+              p.y = H + 5;
+              p.x = Math.random() * W;
+            }
+            const al = p.a * Math.sin(Math.min(p.life, 1) * Math.PI) * 0.68;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(255,210,125,${Math.max(0, al)})`;
+            ctx.fill();
+          }
+          requestAnimationFrame(frame);
+        })();
+      }
+      function scatterDust() {
+        for (const p of dustPts) {
+          p.vy = -Math.random() * 0.6 - 0.2;
+          p.vx = (Math.random() - 0.5) * 0.5;
+          setTimeout(() => {
+            p.vy = -Math.random() * 0.2 - 0.04;
+            p.vx = (Math.random() - 0.5) * 0.12;
+          }, 1200);
+        }
+      }
+
+      let mx = 0,
+        my = 0,
+        tmx = 0,
+        tmy = 0;
+      addEventListener("mousemove", (e) => {
+        mx = (e.clientX / innerWidth - 0.5) * 2;
+        my = (e.clientY / innerHeight - 0.5) * 2;
+      });
+      (function pl() {
+        tmx += (mx - tmx) * 0.055;
+        tmy += (my - tmy) * 0.055;
+        const bw = document.getElementById("book-wrap");
+        if (bw && !bw.classList.contains("opened") && !isMobile()) {
+          bw.style.transform = `translateY(${tmy * 4}px) rotate(${-0.7 + tmx * 0.5}deg)`;
+        }
+        requestAnimationFrame(pl);
+      })();
+
+      initDust();
+      addEventListener("load", () => {
+        setTimeout(() => {
+          const ov = document.getElementById("loverlay");
+          ov.classList.add("out");
+          setTimeout(() => ov.remove(), 1200);
+        }, 600);
+
+        // Build the flipbook immediately so it sits ready behind the cover
+        setTimeout(() => {
+          buildFlipbook();
+          initTurn();
+          bindUploads();
+          document.getElementById("book-open").classList.remove("not-built");
+        }, 200);
+      });
+    </script>
+  </body>
+</html>
