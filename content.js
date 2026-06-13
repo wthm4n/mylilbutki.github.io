@@ -878,7 +878,29 @@ const PAGE_BUILDERS = [
         vf.className = "vid-frame";
         vf.id = "vid-frame";
         if (DIARY.photos.p_video) {
-            vf.innerHTML = `<video controls src="${DIARY.photos.p_video}"></video>`;
+            const vid = document.createElement("video");
+            vid.controls = true;
+            vid.playsInline = true;
+            vid.preload = "none";
+            vid.style.cssText = "width:100%;height:100%;object-fit:contain;";
+
+            const src1 = document.createElement("source");
+            src1.src = DIARY.photos.p_video;
+            src1.type = 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"';
+            vid.appendChild(src1);
+
+            // Force Firefox to re-initialise the media element once
+            // the page is actually visible (Turn.js can clone/move nodes
+            // while building the flipbook, which resets video state in Firefox)
+            const obs = new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting) {
+                    vid.load();
+                    obs.disconnect();
+                }
+            }, { threshold: 0.1 });
+            obs.observe(vid);
+
+            vf.appendChild(vid);
         } else {
             vf.innerHTML = `
                 <div class="vid-ph">

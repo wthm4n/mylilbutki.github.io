@@ -1503,6 +1503,8 @@ body {
     aspect-ratio: 16/9;
     max-width: calc(100% - 28px);
     max-height: calc(var(--BH) - 100px);
+    pointer-events: all;
+    z-index: 9999;
 }
 
 @media (max-width: 600px) {
@@ -1527,6 +1529,9 @@ body {
     height: 100%;
     object-fit: cover;
     display: block;
+    pointer-events: all;
+    position: relative;
+    z-index: 9999;
 }
 
 .vid-ph {
